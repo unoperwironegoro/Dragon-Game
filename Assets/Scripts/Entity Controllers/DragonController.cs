@@ -6,17 +6,20 @@ public class DragonController : MonoBehaviour {
     [HideInInspector]
     public int playerID = 0;
 
-    public string leftKey = "z";
-    public string rightKey = "x";
-
     public Vector2 flapVelocity;
     public Vector2 recoilVelocity;
     public Vector2 projectileVelocity;
 
-    public GameObject projectilePrefab;
-    public AudioClip roarSound;
-    public AudioClip flapSound;
-    public AudioClip fireSound;
+    [SerializeField]
+    private GameObject projectilePrefab;
+    private ParticleSystem smoulder;
+
+    [SerializeField]
+    private AudioClip roarSound;
+    [SerializeField]
+    private AudioClip flapSound;
+    [SerializeField]
+    private AudioClip fireSound;
     private float roarVolume = 1.0f;
     private float flapVolume = 1.0f;
     private float fireVolume = 0.3f;
@@ -24,9 +27,15 @@ public class DragonController : MonoBehaviour {
     private Rigidbody2D rb2d;
     private Animator anim;
     private DamageController dc;
+    private IController ictrl;
 
     private float minChargeTime;
     private float chargeTimer;
+    private bool Charged {
+        set { if(value){ Charge(); } else { Discharge(); } charged = value; }
+        get { return charged; }
+    }
+    private bool charged;
 
     private float stompStun = 0.5f;
     private float stompDamage = 1.0f;
@@ -40,6 +49,9 @@ public class DragonController : MonoBehaviour {
         rb2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         dc = GetComponent<DamageController>();
+        ictrl = GetComponent<IController>();
+        smoulder = GetComponentInChildren<ParticleSystem>();
+        smoulder.Stop();
 	}
 
     void Start() {
@@ -65,25 +77,32 @@ public class DragonController : MonoBehaviour {
 
         int dirRelease = Release();
         if (dirRelease != 0) {
-            if(chargeTimer > minChargeTime) {
+            if(charged) {
+                Charged = false;
                 ShootProjectile(dirRelease);
             }
             anim.SetBool("Flap", false);
             chargeTimer = -1;
         } else if (chargeTimer > -1) {
             chargeTimer += Time.deltaTime;
+            if (!charged && chargeTimer > minChargeTime) {
+                Charged = true;
+            }
         }
     }
 
     #region Player Actions
     private bool Flap() {
-        int dir;
-        if (Input.GetKeyDown(leftKey)) {
-            dir = -1;
-        } else if (Input.GetKeyDown(rightKey)) {
-            dir = 1;
-        } else {
-            return false;
+        int dir = 0;
+        switch(ictrl.Flap()) {
+            case ControlDir.NONE:
+                return false;
+            case ControlDir.LEFT:
+                dir = -1;
+                break;
+            case ControlDir.RIGHT:
+                dir = 1;
+                break;
         }
 
         // Physics
@@ -99,12 +118,24 @@ public class DragonController : MonoBehaviour {
     }
 
     private int Release() {
-        if (Input.GetKeyUp(leftKey)) {
-            return -1;
-        } else if (Input.GetKeyUp(rightKey)) {
-            return 1;
+        switch (ictrl.Flap()) {
+            case ControlDir.LEFT:
+                return -1;
+            case ControlDir.RIGHT:
+                return 1;
+            default:
+                return 0;
         }
-        return 0;
+    }
+
+    private void Charge() {
+        charged = true;
+        smoulder.Play();
+    }
+
+    private void Discharge() {
+        charged = false;
+        smoulder.Stop();
     }
 
     private void ShootProjectile(int dir) {
@@ -124,6 +155,7 @@ public class DragonController : MonoBehaviour {
         rb2d.velocity = recoil;
 
         // Art Effects
+        Discharge();
         anim.SetTrigger("Fire");
         AudioSource.PlayClipAtPoint(fireSound, Camera.main.transform.position, fireVolume);
         Turn(dir);
@@ -141,7 +173,7 @@ public class DragonController : MonoBehaviour {
             }
         }
         if(layer == LayerMask.NameToLayer("Environment")) {
-            if(col.gameObject.tag == "Lava" && dc.isDead) {
+            if(col.gameObject.tag == "Lava" && dc.Dead) {
                 Physics2D.IgnoreCollision(col.collider, col.otherCollider);
             }
         }
@@ -163,7 +195,7 @@ public class DragonController : MonoBehaviour {
     }
 
     private void OnStomp() {
-        if(!dc.isDead) {
+        if(!dc.Dead) {
             return;
         }
         var v = rb2d.velocity;

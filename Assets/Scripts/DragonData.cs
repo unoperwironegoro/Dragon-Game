@@ -18,9 +18,9 @@ public class DragonData {
     public string rightButton;
 
     public void SetDataTo(GameObject dragon) {
-        var drc = dragon.GetComponent<DragonController>();
-        drc.leftKey = leftButton;
-        drc.rightKey = rightButton;
+        PlayerInput pl = dragon.AddComponent<PlayerInput>();
+        pl.leftKey = leftButton;
+        pl.rightKey = rightButton;
 
         var pal = dragon.GetComponent<Palette>();
         pal.palette = colourset; 

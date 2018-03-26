@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DamageController : MonoBehaviour {
     public float health;
-    public bool isDead { get; private set; }
+    public bool Dead { get; private set; }
 
     public delegate void StateChange(GameObject changedObject);
     public event StateChange onDeath;
@@ -18,7 +18,7 @@ public class DamageController : MonoBehaviour {
     private float stunTimer;
 
     public bool invincible;
-    public bool unhurtable { get { return isDead || invincible; } }
+    public bool unhurtable { get { return Dead || invincible; } }
 
     void Update() {
         if (stunned) {
@@ -39,7 +39,7 @@ public class DamageController : MonoBehaviour {
 
         health -= damage;
         if(health <= 0) {
-            isDead = true;
+            Dead = true;
             onDeath(gameObject);
         }
 

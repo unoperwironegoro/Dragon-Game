@@ -23,9 +23,10 @@ public class CameraAspectEnforcer : MonoBehaviour {
         lastScreenWidth = Screen.width;
         lastScreenHeight = Screen.height;
         AdjustScreen();
+        InvokeRepeating("CheckScreen", 0f, 0.5f);
     }
 
-    void Update() {
+    void CheckScreen() {
         float curScreenHeight = Screen.height;
         float curScreenWidth = Screen.width;
         if(lastScreenWidth != Screen.width || lastScreenHeight != Screen.height) {
