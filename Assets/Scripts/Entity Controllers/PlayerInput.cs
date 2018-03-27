@@ -6,22 +6,23 @@ public class PlayerInput : MonoBehaviour, IController {
     public string rightKey;
 
     void Start() {
-        Destroy(gameObject.GetComponent<AIInput>());
+        GetComponent<DragonController>().SwitchController(this);
+        Destroy(GetComponent<AIInput>());
     }
-    
+
     public ControlDir Flap() {
-        if(Input.GetKeyDown(leftKey)) {
+        if(leftKey != "" && Input.GetKeyDown(leftKey)) {
             return ControlDir.LEFT;
-        } else if (Input.GetKeyDown(rightKey)) {
+        } else if (rightKey != "" && Input.GetKeyDown(rightKey)) {
             return ControlDir.RIGHT;
         }
         return ControlDir.NONE;
     }
 
     public ControlDir Release() {
-        if (Input.GetKeyUp(leftKey)) {
+        if (leftKey != "" && Input.GetKeyUp(leftKey)) {
             return ControlDir.LEFT;
-        } else if (Input.GetKeyUp(rightKey)) {
+        } else if (rightKey != "" && Input.GetKeyUp(rightKey)) {
             return ControlDir.RIGHT;
         }
         return ControlDir.NONE;

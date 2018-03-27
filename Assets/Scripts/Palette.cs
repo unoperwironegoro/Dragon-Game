@@ -5,7 +5,8 @@ using System.Collections;
 [ExecuteInEditMode]
 public class Palette : MonoBehaviour {
     public Color[] palette = new Color[4];
-    public int colorPreset = -1;
+    public int colourPreset = -1;
+    private int lastColourPreset = -1;
 
     private Material mat;
     private SpriteRenderer sr;
@@ -19,17 +20,17 @@ public class Palette : MonoBehaviour {
         sr = GetComponent<SpriteRenderer>();
         sr.sharedMaterial = mat;
 
-        if (colorPreset >= 0) {
+        if (colourPreset >= 0) {
             var colourSets = ColourSets.colourSets;
-            palette = colourSets[colorPreset % colourSets.Length];
+            palette = colourSets[colourPreset % colourSets.Length];
         }
         mat.SetMatrix("_ColorMatrix", colorMatrix);
     }
 
     void Update() {
-        if (colorPreset > 0) {
+        if (colourPreset != lastColourPreset && colourPreset >= 0) {
             var colourSets = ColourSets.colourSets;
-            palette = colourSets[colorPreset % colourSets.Length];
+            palette = colourSets[colourPreset % colourSets.Length];
         }
         mat.SetMatrix("_ColorMatrix", colorMatrix);
     }

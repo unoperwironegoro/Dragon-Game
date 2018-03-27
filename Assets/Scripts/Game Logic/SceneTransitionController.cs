@@ -3,20 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneTransitionController : MonoBehaviour {
-    public static SceneTransitionController stc;
-
+public class SceneTransitionController : SingletonBehaviour<SceneTransitionController> {
     private Animator anim;
     private string nextSceneName;
 
     void Awake() {
-        if(stc != null && stc != this) {
-            Destroy(gameObject);
-            return;
+        if(SAwake()) {
+            anim = GetComponent<Animator>();
         }
-        stc = this;
-        anim = GetComponent<Animator>();
-        DontDestroyOnLoad(gameObject);
     }
 	
     /// Called from the Animator
@@ -24,12 +18,34 @@ public class SceneTransitionController : MonoBehaviour {
         SceneManager.LoadScene(nextSceneName, LoadSceneMode.Single);
 	}
 
-    public void Transition(string sceneName) {
+    private void Transition(string sceneName) {
         nextSceneName = sceneName;
         anim.SetTrigger("Start");
     }
 
-    public static void ChangeScene(string sceneName) {
-        stc.Transition(sceneName);
+    // Instantly load scene
+    public void InstantSceneUI(string sceneName) {
+        instance.nextSceneName = sceneName;
+        instance.EventLoadScene();
+    }
+
+    // Use fader
+    public void TransitionSceneUI(string sceneName) {
+        instance.Transition(sceneName);
+    }
+
+    // Instantly load scene
+    public static void InstantScene(string sceneName) {
+        instance.nextSceneName = sceneName;
+        instance.EventLoadScene();
+    }
+
+    // Use fader
+    public static void TransitionScene(string sceneName) {
+        instance.Transition(sceneName);
+    }
+
+    protected override SceneTransitionController GetInstance() {
+        return this;
     }
 }

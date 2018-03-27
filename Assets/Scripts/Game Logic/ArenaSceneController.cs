@@ -10,7 +10,8 @@ public class ArenaSceneController : MonoBehaviour {
 
     public AudioClip victorySound;
 
-    private ArenaData gm; 
+    private ArenaData adata;
+    private GameData gdata;
     private GameObject[] players;
     private List<GameObject> alivePlayers = new List<GameObject>();
 
@@ -18,10 +19,11 @@ public class ArenaSceneController : MonoBehaviour {
 
 	void Start () {
         // Read information from the previous scene held by the ArenaGameManager
-        gm = FindObjectOfType<ArenaData>();
+        adata = FindObjectOfType<ArenaData>();
+        gdata = FindObjectOfType<GameData>();
 
-        if(gm) {
-            players = new GameObject[gm.pdata.Length];
+        if (gdata && adata) {
+            players = new GameObject[adata.pdata.Length];
 
             for(int i = 0; i < players.Length; i++) {
                 GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
@@ -33,7 +35,25 @@ public class ArenaSceneController : MonoBehaviour {
 
                 // Populating dragon
                 newDragon.GetComponent<DragonController>().playerID = i;
-                gm.pdata[i].ddata.SetDataTo(newDragon);
+                gdata.ddata[i].SetDataTo(newDragon);
+            }
+
+            if(players.Length == 1) {
+                // Temp
+                GameObject[] newPlayers = new GameObject[2];
+                newPlayers[0] = players[0];
+                players = newPlayers;
+
+                GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
+                
+                // Scene Logic
+                players[1] = newDragon;
+                alivePlayers.Add(newDragon);
+                newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
+
+                // Populating dragon
+                newDragon.GetComponent<DragonController>().playerID = 1;
+                newDragon.GetComponent<Palette>().colourPreset = Random.Range(0, ColourSets.colourSets.Length);
             }
         } else /* Standalone Scene Mode */ {
             players = FindObjectsOfType<DragonController>()
@@ -95,17 +115,19 @@ public class ArenaSceneController : MonoBehaviour {
 
         yield return new WaitForSeconds(3f);
 
-        if (gm) {
+        if (adata) {
             if (winnerDragon != null) {
-                gm.pdata[winnerDragon.GetComponent<DragonController>().playerID].score += 1;
+                adata.pdata[winnerDragon.GetComponent<DragonController>().playerID].score += 1;
             }
-            gm.roundsRemaining -= 1;
-            if(gm.roundsRemaining == 0) {
-                SceneTransitionController.ChangeScene("ArenaEnd");
+            adata.roundsRemaining -= 1;
+            if(adata.roundsRemaining == 0) {
+                SceneTransitionController.TransitionScene("Menu");
+                //TEMP
+                Destroy(adata);
                 yield break;
             }
         }
 
-        SceneTransitionController.ChangeScene("Arena1");
+        SceneTransitionController.TransitionScene("Arena1");
     }
 }

@@ -30,7 +30,7 @@ public class DragonController : MonoBehaviour {
     private IController ictrl;
 
     private float minChargeTime;
-    private float chargeTimer;
+    private float chargeTimer = -100;
     private bool Charged {
         set { if(value){ Charge(); } else { Discharge(); } charged = value; }
         get { return charged; }
@@ -51,7 +51,6 @@ public class DragonController : MonoBehaviour {
         dc = GetComponent<DamageController>();
         ictrl = GetComponent<IController>();
         smoulder = GetComponentInChildren<ParticleSystem>();
-        smoulder.Stop();
 	}
 
     void Start() {
@@ -71,18 +70,21 @@ public class DragonController : MonoBehaviour {
 	}
 
     private void ControlDragon() {
+        // Flap
         if (Flap()) {
             chargeTimer = 0;
         }
 
+        // Release
         int dirRelease = Release();
         if (dirRelease != 0) {
             if(charged) {
-                Charged = false;
                 ShootProjectile(dirRelease);
+                Charged = false;
             }
             anim.SetBool("Flap", false);
             chargeTimer = -1;
+        // Charge
         } else if (chargeTimer > -1) {
             chargeTimer += Time.deltaTime;
             if (!charged && chargeTimer > minChargeTime) {
@@ -118,7 +120,7 @@ public class DragonController : MonoBehaviour {
     }
 
     private int Release() {
-        switch (ictrl.Flap()) {
+        switch (ictrl.Release()) {
             case ControlDir.LEFT:
                 return -1;
             case ControlDir.RIGHT:
@@ -129,12 +131,10 @@ public class DragonController : MonoBehaviour {
     }
 
     private void Charge() {
-        charged = true;
         smoulder.Play();
     }
 
     private void Discharge() {
-        charged = false;
         smoulder.Stop();
     }
 
@@ -242,4 +242,8 @@ public class DragonController : MonoBehaviour {
         transform.localScale = scale;
     }
     #endregion
+
+    public void SwitchController(IController ictrl) {
+        this.ictrl = ictrl;
+    }
 }
