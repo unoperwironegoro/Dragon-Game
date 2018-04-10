@@ -33,7 +33,8 @@ public class CustomisationController : MonoBehaviour {
     private string lastScene;
     private string nextScene;
 
-    private string[] numberWords = { "One", "Two", "Three", "Four" };
+    private static string[] numberWords = { "One", "Two", "Three", "Four" };
+    private const string puncInput = "`-=[];\\,./";
 
 	void Start () {
         ddatum = new DragonData();
@@ -92,6 +93,10 @@ public class CustomisationController : MonoBehaviour {
             char lc = char.ToLower(c);
             if ('a' <= lc && c <= 'z') {
                 return lc.ToString();
+            }
+
+            if (puncInput.Contains(c.ToString())) {
+                return c.ToString();
             }
         }
         return null;
