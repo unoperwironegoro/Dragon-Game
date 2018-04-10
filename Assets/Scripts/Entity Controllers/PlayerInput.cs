@@ -6,7 +6,7 @@ public class PlayerInput : MonoBehaviour, IController {
     public string rightKey;
 
     void Start() {
-        GetComponent<DragonController>().SwitchController(this);
+        GetComponent<DragonController>().ictrl = this;
         Destroy(GetComponent<AIInput>());
     }
 

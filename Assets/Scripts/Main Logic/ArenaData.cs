@@ -19,6 +19,7 @@ public class ArenaData : SingletonBehaviour<ArenaData> {
 
     public PlayerData[] pdata;
     public int roundsRemaining;
+    public int ais;
 
     private void Awake() {
         var gdata = FindObjectOfType<GameData>();

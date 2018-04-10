@@ -1,0 +1,28 @@
+[-]SceneController :: (Not Enforced) Singleton Monobehaviour
+Custom scene behaviour is held in these scripts.
+
+[-]Data :: Singleton Monobehaviour
+Data persistent across scenes are stored in these script. The first instance
+created becomes the singleton. Further instances may or may not be Destroyed.
+
+--------------------------- Game Architecture --------------------------------
+
+=State
+  Menu -> (Solo | Duel)
+  Solo -> Customisation[1]
+  Duel -> Customisation[2]
+  Customisation[n] -> Arena
+  TODO: Arena -> Results -> (Arena | Menu)
+
+=Data
+  GameData
+    Function
+      Player Controls, Dragon Customisation, Player Count, Creation Progress
+    Lifecycle
+      Carried through a single game session
+
+  ArenaData
+    Function
+      Round Progress, Player Info, Score, Player Statistics, Creation Progress
+    Lifecycle
+      Created from the beginning of a battle, deleted after exiting battle mode

@@ -27,7 +27,7 @@ public class DragonController : MonoBehaviour {
     private Rigidbody2D rb2d;
     private Animator anim;
     private DamageController dc;
-    private IController ictrl;
+    public IController ictrl;
 
     private float minChargeTime;
     private float chargeTimer = -100;
@@ -242,8 +242,4 @@ public class DragonController : MonoBehaviour {
         transform.localScale = scale;
     }
     #endregion
-
-    public void SwitchController(IController ictrl) {
-        this.ictrl = ictrl;
-    }
 }

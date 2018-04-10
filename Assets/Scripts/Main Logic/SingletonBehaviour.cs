@@ -3,6 +3,7 @@ using System.Collections;
 
 public abstract class SingletonBehaviour<T> : MonoBehaviour {
     protected static T instance;
+    private static SingletonBehaviour<T> subclass_instance;
 
     void Awake() {
         SAwake();
@@ -16,8 +17,16 @@ public abstract class SingletonBehaviour<T> : MonoBehaviour {
             return false;
         }
         instance = GetInstance();
+        subclass_instance = this;
         DontDestroyOnLoad(gameObject);
         return true;
+    }
+
+    private void OnDestroy() {
+        if(subclass_instance == this) {
+            instance = default(T);
+            subclass_instance = null;
+        }
     }
 
     protected virtual void Singlify() { }

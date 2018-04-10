@@ -18,11 +18,13 @@ public class ArenaSceneController : MonoBehaviour {
     private const float minSpawnSpaceX = 2f;
 
 	void Start () {
-        // Read information from the previous scene held by the ArenaGameManager
+        // Read information from the previous scene held by the ArenaData
         adata = FindObjectOfType<ArenaData>();
         gdata = FindObjectOfType<GameData>();
 
         if (gdata && adata) {
+            float nextPlayerID = 0; // TODO
+
             players = new GameObject[adata.pdata.Length];
 
             for(int i = 0; i < players.Length; i++) {
@@ -38,8 +40,9 @@ public class ArenaSceneController : MonoBehaviour {
                 gdata.ddata[i].SetDataTo(newDragon);
             }
 
+            //TODO convert to AI creation
             if(players.Length == 1) {
-                // Temp
+                /* Solo play, create AI */
                 GameObject[] newPlayers = new GameObject[2];
                 newPlayers[0] = players[0];
                 players = newPlayers;

@@ -27,7 +27,7 @@ public class AIInput : MonoBehaviour, IController {
         ceiling = GameObject.Find("Ceiling").transform;
 
         // Find all other dragons
-        dragons = new List<DamageController>(GameObject.FindObjectsOfType<DamageController>());
+        dragons = new List<DamageController>(FindObjectsOfType<DamageController>());
         dragons.Remove(GetComponent<DamageController>());
     }
 
