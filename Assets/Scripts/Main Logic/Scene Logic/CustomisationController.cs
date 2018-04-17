@@ -18,54 +18,78 @@ public class CustomisationController : MonoBehaviour {
     private int colourIndex;
     private Color[] colourSet = ColourSets.colourSets[0];
     [SerializeField]
-    private Image colourBox1;
+    private Image colourBoxBorder;
     [SerializeField]
-    private Image colourBox2;
+    private Image colourBoxFill;
 
     [SerializeField]
     private Text title;
     [SerializeField]
     private Text next;
-    private GameData gdata;
+    [SerializeField]
+    private Text prev;
 
-    private DragonData ddatum;
+    [SerializeField]
+    private int playerID;
 
-    private string lastScene;
-    private string nextScene;
+    private DragonConfig dc;
+
+    private const string thisSceneName = "Customisation";
 
     private static string[] numberWords = { "One", "Two", "Three", "Four" };
     private const string puncInput = "`-=[];\\,./";
+    private const int colourFillIndex = 0;
+    private const int colourBorderIndex = 3;
 
-	void Start () {
-        ddatum = new DragonData();
-        ddatum.leftButton = leftText.text;
-        ddatum.rightButton = rightText.text;
-        ddatum.colourset = palette.palette;
+    void Start () {
+        ChangePlayer(0);
+	}
 
-        gdata = FindObjectOfType<GameData>();
-        int playerNum = gdata.setup + 1;
-        bool penultimate = gdata.playerCount == playerNum;
+    private void ChangePlayer(int playerID) {
+        this.playerID = playerID;
+
+        dc = GameData.GetPlayerData(playerID);
+        leftText.text = dc.leftButton;
+        rightText.text = dc.rightButton;
+
+        Color c = dc.colourset[colourFillIndex];
+        c.a = 1;
+        colourBoxFill.color = c;
+        c = dc.colourset[colourBorderIndex];
+        c.a = 1;
+        colourBoxBorder.color = c;
+        
+        dc.SetDataToDragon(pinput.gameObject);
+
+        int playerNum = playerID + 1;
+        bool penultimate = GameData.PlayerCount == playerNum;
         bool first = playerNum == 1;
 
-        next.text = penultimate? "Done" : "Next";
-        lastScene = first? "Menu" : "Customisation";
-        nextScene = penultimate? "Arena1" : "Customisation";
+        next.enabled = !penultimate;
+        prev.enabled = !first;
 
         title.text = "Player " + numberWords[playerNum - 1];
-	}
+    }
 	
-	public void Back () {
-        gdata.setup--;
-        SceneTransitionController.InstantScene(lastScene);
+	public void Back() {
+        if(!prev.enabled) {
+            return;
+        }
+        ChangePlayer(playerID - 1);
 	}
 
-    public void Next() {
-        gdata.ddata[gdata.setup] = ddatum;
-        gdata.setup++;
-        SceneTransitionController.InstantScene(nextScene);
+    public void Done(string finishScene) {
+        SceneTransitionController.InstantScene(finishScene);
     }
 
-    public void GetInput(Text text) {
+    public void Next() {
+        if (!next.enabled) {
+            return;
+        }
+        ChangePlayer(playerID + 1);
+    }
+
+    public void SetLRContext(Text text) {
         keyText = text;
     }
 
@@ -79,10 +103,10 @@ public class CustomisationController : MonoBehaviour {
             keyText.text = newKey;
             if(keyText == leftText) {
                 pinput.leftKey = newKey;
-                ddatum.leftButton = newKey;
+                dc.leftButton = newKey;
             } else /* rightText */ {
                 pinput.rightKey = newKey;
-                ddatum.rightButton = newKey;
+                dc.rightButton = newKey;
             }
             keyText = null;
         }
@@ -103,18 +127,17 @@ public class CustomisationController : MonoBehaviour {
     }
 
     public void ColourSwitch() {
-        colourIndex++;
-        colourIndex %= ColourSets.colourSets.Length;
+        colourIndex = (colourIndex + 1) % ColourSets.colourSets.Length;
         colourSet = ColourSets.colourSets[colourIndex];
 
-        palette.colourPreset = colourIndex;
-        ddatum.colourset = colourSet;
+        palette.ColourSet = colourSet;
+        dc.colourset = colourSet;
 
-        Color c = colourSet[0];
+        Color c = colourSet[colourBorderIndex];
         c.a = 1;
-        colourBox1.color = c;
-        c = colourSet[3];
+        colourBoxBorder.color = c;
+        c = colourSet[colourFillIndex];
         c.a = 1;
-        colourBox2.color = c;
+        colourBoxFill.color = c;
     }
 }

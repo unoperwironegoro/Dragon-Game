@@ -6,9 +6,11 @@ public class DamageController : MonoBehaviour {
     public float health;
     public bool Dead { get; private set; }
 
+    public delegate void StunChange(GameObject changedObject, bool restun);
+    public event StunChange onStun;
+
     public delegate void StateChange(GameObject changedObject);
     public event StateChange onDeath;
-    public event StateChange onStun;
     public event StateChange onUnstun;
 
     public delegate void Damage(float damage);
@@ -47,8 +49,9 @@ public class DamageController : MonoBehaviour {
     }
 
     public void Stun(float stunDuration) {
+        bool wasStunned = stunned;
         stunned = true;
         stunTimer = Mathf.Max(stunDuration, stunTimer);
-        onStun(gameObject);
+        onStun(gameObject, wasStunned);
     }
 }

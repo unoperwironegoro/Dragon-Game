@@ -12,7 +12,7 @@ public class ArenaSceneController : MonoBehaviour {
 
     private ArenaData adata;
     private GameData gdata;
-    private GameObject[] players;
+    private GameObject[] dragons;
     private List<GameObject> alivePlayers = new List<GameObject>();
 
     private const float minSpawnSpaceX = 2f;
@@ -20,50 +20,30 @@ public class ArenaSceneController : MonoBehaviour {
 	void Start () {
         // Read information from the previous scene held by the ArenaData
         adata = FindObjectOfType<ArenaData>();
-        gdata = FindObjectOfType<GameData>();
+        gdata = GameData.Instance;
 
         if (gdata && adata) {
-            float nextPlayerID = 0; // TODO
-
-            players = new GameObject[adata.pdata.Length];
-
-            for(int i = 0; i < players.Length; i++) {
-                GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
-
-                // Scene Logic
-                players[i] = newDragon;
-                alivePlayers.Add(newDragon);
-                newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
-
-                // Populating dragon
-                newDragon.GetComponent<DragonController>().playerID = i;
-                gdata.ddata[i].SetDataTo(newDragon);
+            int playerCount = GameData.PlayerCount;
+            //int aiCount = adata.dragonCount - playerCount;
+            //dragons = new GameObject[adata.dragonCount];
+            
+            //TEMP 
+            int aiCount = GameData.PlayerCount == 1? 1 : 0;
+            dragons = new GameObject[adata.dragonCount + aiCount];
+            
+            for (int i = 0; i < playerCount; i++) {
+                dragons[i] = GameData.InjectPlayerDataToDragon(i, CreateDragon(i));
+            }
+            for (int i = playerCount; i < dragons.Length; i++) {
+                dragons[i] = CreateDragon(1);
             }
 
-            //TODO convert to AI creation
-            if(players.Length == 1) {
-                /* Solo play, create AI */
-                GameObject[] newPlayers = new GameObject[2];
-                newPlayers[0] = players[0];
-                players = newPlayers;
-
-                GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
-                
-                // Scene Logic
-                players[1] = newDragon;
-                alivePlayers.Add(newDragon);
-                newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
-
-                // Populating dragon
-                newDragon.GetComponent<DragonController>().playerID = 1;
-                newDragon.GetComponent<Palette>().colourPreset = Random.Range(0, ColourSets.colourSets.Length);
-            }
         } else /* Standalone Scene Mode */ {
-            players = FindObjectsOfType<DragonController>()
+            dragons = FindObjectsOfType<DragonController>()
                 .Select(drc => drc.gameObject)
                 .ToArray();
 
-            foreach(var dragon in players) {
+            foreach(var dragon in dragons) {
                 alivePlayers.Add(dragon);
                 dragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
             }
@@ -72,10 +52,24 @@ public class ArenaSceneController : MonoBehaviour {
         PositionPlayers();
 	}
 
+    private GameObject CreateDragon(int playerID) {
+        GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
+
+        // Scene Logic
+        dragons[playerID] = newDragon;
+        alivePlayers.Add(newDragon);
+        newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
+
+        // Populating dragon
+        newDragon.GetComponent<DragonController>().playerID = playerID;
+        newDragon.GetComponent<Palette>().ColourSet = ColourSets.RandomColourSet();
+        return newDragon;
+    }
+
     private void PositionPlayers() {
-        Vector2[] positions = new Vector2[players.Length];
+        Vector2[] positions = new Vector2[dragons.Length];
         for (int i = 0; i < positions.Length; i++) {
-            var player = players[i];
+            var player = dragons[i];
 
             Vector2 spawnPos = Vector2.zero;
             for(int tries = 0; tries < 25; tries++) {

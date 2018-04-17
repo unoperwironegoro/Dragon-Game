@@ -19,20 +19,16 @@ public class ArenaData : SingletonBehaviour<ArenaData> {
 
     public PlayerData[] pdata;
     public int roundsRemaining;
-    public int ais;
+    public int dragonCount { get { return pdata.Length; } }
 
-    private void Awake() {
-        var gdata = FindObjectOfType<GameData>();
-        if(gdata && SAwake()) {
-            pdata = new PlayerData[gdata.playerCount];
+    protected override void Awake() {
+        var gdata = GameData.Instance;
+        if(gdata && AcquireSingletonStatus()) {
+            pdata = new PlayerData[GameData.PlayerCount];
         }    
     }
 
-    protected override void Singlify() {
+    protected override void OnInstanceFound() {
         Destroy(this);
-    }
-
-    protected override ArenaData GetInstance() {
-        return this;
     }
 }

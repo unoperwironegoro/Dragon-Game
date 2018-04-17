@@ -9,8 +9,6 @@ public class MenuSceneController : MonoBehaviour {
     }
 
     public void SetPlayerCount(int count) {
-        var gdata = FindObjectOfType<GameData>();
-        gdata.playerCount = count;
-        gdata.setup = 0;
+        GameData.PlayerCount = count;
     }
 }

@@ -186,7 +186,7 @@ public class DragonController : MonoBehaviour {
     }
 
     #region OnEvent Logic
-    private void OnStun(GameObject _) {
+    private void OnStun(GameObject _, bool restun) {
         anim.SetBool("Stunned", true);
     }
 

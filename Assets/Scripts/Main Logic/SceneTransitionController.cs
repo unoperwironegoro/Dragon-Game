@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneTransitionController : SingletonBehaviour<SceneTransitionController> {
+    // TODO rethink this class' singleton usage - singletonBehaviours transcend scenes
     private Animator anim;
     private string nextSceneName;
 
-    void Awake() {
-        if(SAwake()) {
+    protected override void Awake() {
+        if(AcquireSingletonStatus()) {
             anim = GetComponent<Animator>();
         }
     }
@@ -25,27 +26,23 @@ public class SceneTransitionController : SingletonBehaviour<SceneTransitionContr
 
     // Instantly load scene
     public void InstantSceneUI(string sceneName) {
-        instance.nextSceneName = sceneName;
-        instance.EventLoadScene();
+        Instance.nextSceneName = sceneName;
+        Instance.EventLoadScene();
     }
 
     // Use fader
     public void TransitionSceneUI(string sceneName) {
-        instance.Transition(sceneName);
+        Instance.Transition(sceneName);
     }
 
     // Instantly load scene
     public static void InstantScene(string sceneName) {
-        instance.nextSceneName = sceneName;
-        instance.EventLoadScene();
+        Instance.nextSceneName = sceneName;
+        Instance.EventLoadScene();
     }
 
     // Use fader
     public static void TransitionScene(string sceneName) {
-        instance.Transition(sceneName);
-    }
-
-    protected override SceneTransitionController GetInstance() {
-        return this;
+        Instance.Transition(sceneName);
     }
 }
