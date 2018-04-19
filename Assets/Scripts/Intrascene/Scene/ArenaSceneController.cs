@@ -118,13 +118,13 @@ public class ArenaSceneController : MonoBehaviour {
             }
             adata.roundsRemaining -= 1;
             if(adata.roundsRemaining == 0) {
-                SceneTransitionController.TransitionScene("Menu");
+                SceneSwitcher.Transition("Menu");
                 //TEMP
                 Destroy(adata);
                 yield break;
             }
         }
 
-        SceneTransitionController.TransitionScene("Arena1");
+        SceneSwitcher.Transition("Arena1");
     }
 }

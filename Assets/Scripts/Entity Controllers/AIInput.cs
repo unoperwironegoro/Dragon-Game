@@ -21,6 +21,7 @@ public class AIInput : MonoBehaviour, IController {
     private float releaseTime = 0;
 
     void Start() {
+        //TODO extract
         // Find level layout
         lava = GameObject.Find("Lava").transform;
         floor = GameObject.Find("Floor").transform;

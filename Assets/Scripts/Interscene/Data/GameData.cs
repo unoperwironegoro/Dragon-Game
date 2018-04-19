@@ -18,6 +18,17 @@ public class GameData : SingletonBehaviour<GameData> {
         for(int i = 0; i < dcfg.Length; i++) {
             dcfg[i] = new DragonConfig();
         }
+        SetDefaults();
+    }
+
+    // Defaults
+    private void SetDefaults() {
+        char[] cs = "zxqwnmop".ToCharArray();
+        for(int i = 0; i < dcfg.Length; i++) {
+            dcfg[i].leftButton = cs[2*i].ToString();
+            dcfg[i].rightButton = cs[2*i + 1].ToString();
+            dcfg[i].colourset = ColourSets.RandomColourSet();
+        }
     }
 
     public static GameObject InjectPlayerDataToDragon(int playerID, GameObject dragon) {

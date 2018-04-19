@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DuplicateDestroy : MonoBehaviour {
-    private static Dictionary<string, GameObject> singletons;
+    private static Dictionary<string, GameObject> singletons = new Dictionary<string, GameObject>();
 
     [SerializeField]
     private string id;
@@ -11,6 +11,7 @@ public class DuplicateDestroy : MonoBehaviour {
 	private void Awake() {
         if(!singletons.ContainsKey(id)) {
             singletons[id] = gameObject;
+            DontDestroyOnLoad(gameObject);
         } else {
             Destroy(gameObject);
         }

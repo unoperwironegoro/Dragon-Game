@@ -79,7 +79,7 @@ public class CustomisationController : MonoBehaviour {
 	}
 
     public void Done(string finishScene) {
-        SceneTransitionController.InstantScene(finishScene);
+        SceneSwitcher.InstantSwitch(finishScene, gameObject.scene.name, UnityEngine.SceneManagement.LoadSceneMode.Additive);
     }
 
     public void Next() {
