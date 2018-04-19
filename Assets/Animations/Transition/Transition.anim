@@ -304,7 +304,7 @@ AnimationClip:
   m_GenerateMotionCurves: 0
   m_Events:
   - time: 0.28333333
-    functionName: EventLoadScene
+    functionName: AnimationComplete
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

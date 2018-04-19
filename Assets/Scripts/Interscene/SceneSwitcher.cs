@@ -8,13 +8,19 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class SceneSwitcher : SingletonBehaviour<SceneSwitcher> {
     [SerializeField]
+    private GameObject transitionObject;
+
     private IResponder transitioner;
     private SceneSwitchData sceneSwitchData;
-	
+
+    private void Start() {
+        transitioner = transitionObject.GetComponent<IResponder>();
+    }
+
     /// <summary>
     /// Actually loads the Scene. May be called directly or as a Response.
     /// </summary>
-	public void LoadScene () {
+    public void LoadScene () {
         if(sceneSwitchData.unloadScene != null) {
             SceneManager.UnloadSceneAsync(sceneSwitchData.unloadScene);
         }

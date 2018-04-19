@@ -118,7 +118,7 @@ public class ArenaSceneController : MonoBehaviour {
             }
             adata.roundsRemaining -= 1;
             if(adata.roundsRemaining == 0) {
-                SceneSwitcher.Transition("Menu");
+                SceneSwitcher.Transition("MenuMain");
                 //TEMP
                 Destroy(adata);
                 yield break;
