@@ -19,8 +19,8 @@ public class DamageController : MonoBehaviour {
     public bool stunned { get; private set; }
     private float stunTimer;
 
-    public bool invincible;
-    public bool unhurtable { get { return Dead || invincible; } }
+    public bool Invincible;
+    public bool Unhurtable { get { return Dead || Invincible; } }
 
     void Update() {
         if (stunned) {
@@ -33,7 +33,7 @@ public class DamageController : MonoBehaviour {
     }
 
     public bool Hurt(float damage) {
-        if(unhurtable) {
+        if(Unhurtable) {
             return false;
         }
 
@@ -53,5 +53,13 @@ public class DamageController : MonoBehaviour {
         stunned = true;
         stunTimer = Mathf.Max(stunDuration, stunTimer);
         onStun(gameObject, wasStunned);
+    }
+
+    public void BecomeInvulnerable() {
+        Invincible = true;
+    }
+
+    public void BecomeVulnerable() {
+        Invincible = false;
     }
 }

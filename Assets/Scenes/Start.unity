@@ -165,3 +165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 681c4a3cf32fd3f43a43c633b746c595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseScene: ArenaMenu
+  extraScenes:
+  - MenuMain
