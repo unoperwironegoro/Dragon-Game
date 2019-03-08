@@ -3,132 +3,137 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using Unoper.Unity.Utils;
 
-public class ArenaSceneController : MonoBehaviour {
+namespace Unoper.Unity.DragonGame {
 
-    [SerializeField] private UnityEvent OnGameEnd;
-    [SerializeField] private UnityEvent OnRoundEnd;
+    public class ArenaSceneController : MonoBehaviour {
 
-    public GameObject dragonPrefab;
-    public GameObject victoryPrefab;
+        [SerializeField] private UnityEvent OnGameEnd;
+        [SerializeField] private UnityEvent OnRoundEnd;
 
-    public AudioClip victorySound;
+        public GameObject dragonPrefab;
+        public GameObject victoryPrefab;
 
-    private ArenaData adata;
-    private GameData gdata;
-    private GameObject[] dragons;
-    private List<GameObject> alivePlayers = new List<GameObject>();
+        public AudioClip victorySound;
 
-    private const float minSpawnSpaceX = 2f;
+        private GameManager gManager;
+        private CustomisationManager cManager;
 
-	void Start () {
-        // Read information from the previous scene held by the ArenaData
-        adata = FindObjectOfType<ArenaData>();
-        gdata = GameData.Instance;
+        private GameObject[] dragons;
+        private List<GameObject> alivePlayers = new List<GameObject>();
 
-        if (gdata && adata) {
-            int playerCount = GameData.PlayerCount;
-            //int aiCount = adata.dragonCount - playerCount;
-            //dragons = new GameObject[adata.dragonCount];
-            
-            //TEMP 
-            int aiCount = GameData.PlayerCount == 1? 1 : 0;
-            dragons = new GameObject[adata.dragonCount + aiCount];
-            
-            for (int i = 0; i < playerCount; i++) {
-                dragons[i] = GameData.InjectPlayerDataToDragon(i, CreateDragon(i));
+        private const float minSpawnSpaceX = 2f;
+
+	    void Start () {
+            gManager = SingletonHelper.Find(SingletonEnums.GameManager).GetComponent<GameManager>();
+            cManager = SingletonHelper.Find(SingletonEnums.CustomisationManager).GetComponent<CustomisationManager>();
+
+            if (gManager) {
+
+                var humanCount = gManager.GameData.HumanCount;
+                var aiCount = gManager.GameData.AICount;
+
+                var playersDragons = Enumerable
+                    .Range(0, humanCount)
+                    .Select(i => {
+                        var dragon = CreateDragon(i);
+                        cManager.GetPlayerCustomisation(i).SetDataToDragon(dragon);
+                        return dragon;
+                    });
+
+                var aiDragons = Enumerable
+                    .Range(humanCount, aiCount)
+                    .Select(i => CreateDragon(i));
+
+                dragons = playersDragons.Concat(aiDragons).ToArray();
+
+            } else /* Standalone Scene Mode */ {
+                dragons = FindObjectsOfType<DragonController>()
+                    .Select(drc => drc.gameObject)
+                    .ToArray();
+
+                foreach(var dragon in dragons) {
+                    alivePlayers.Add(dragon);
+                    dragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
+                }
             }
-            for (int i = playerCount; i < dragons.Length; i++) {
-                dragons[i] = CreateDragon(1);
-            }
 
-        } else /* Standalone Scene Mode */ {
-            dragons = FindObjectsOfType<DragonController>()
-                .Select(drc => drc.gameObject)
-                .ToArray();
+            PositionPlayers();
+	    }
 
-            foreach(var dragon in dragons) {
-                alivePlayers.Add(dragon);
-                dragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
+        private GameObject CreateDragon(int playerID) {
+            GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
+
+            // Scene Logic
+            alivePlayers.Add(newDragon);
+            newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
+
+            // Populating dragon
+            newDragon.GetComponent<DragonController>().playerID = playerID;
+            newDragon.GetComponent<Palette>().ColourSet = ColourSets.RandomColourSet();
+            return newDragon;
+        }
+
+        private void PositionPlayers() {
+            Vector2[] positions = new Vector2[dragons.Length];
+            for (int i = 0; i < positions.Length; i++) {
+                var player = dragons[i];
+
+                Vector2 spawnPos = Vector2.zero;
+                for(int tries = 0; tries < 25; tries++) {
+                    spawnPos = new Vector2(Random.Range(-5, 5), Random.Range(-4, 4));
+                    float spawnSpaceX = float.MaxValue;
+                    for (int j = 0; j < i; j++) {
+                        spawnSpaceX = Mathf.Min(spawnSpaceX, Mathf.Abs((spawnPos - positions[j]).x));
+                    }
+                    if(spawnSpaceX >= minSpawnSpaceX) {
+                        break;
+                    }
+                }
+
+                positions[i] = spawnPos;
+                player.transform.position = spawnPos;
             }
         }
 
-        PositionPlayers();
-	}
+        private void OnDragonDeath(GameObject deadDragon) {
+            alivePlayers.Remove(deadDragon);
+            deadDragon.GetComponent<DamageController>().onDeath -= OnDragonDeath;
 
-    private GameObject CreateDragon(int playerID) {
-        GameObject newDragon = Instantiate(dragonPrefab, Vector2.zero, Quaternion.identity);
-
-        // Scene Logic
-        dragons[playerID] = newDragon;
-        alivePlayers.Add(newDragon);
-        newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
-
-        // Populating dragon
-        newDragon.GetComponent<DragonController>().playerID = playerID;
-        newDragon.GetComponent<Palette>().ColourSet = ColourSets.RandomColourSet();
-        return newDragon;
-    }
-
-    private void PositionPlayers() {
-        Vector2[] positions = new Vector2[dragons.Length];
-        for (int i = 0; i < positions.Length; i++) {
-            var player = dragons[i];
-
-            Vector2 spawnPos = Vector2.zero;
-            for(int tries = 0; tries < 25; tries++) {
-                spawnPos = new Vector2(Random.Range(-5, 5), Random.Range(-4, 4));
-                float spawnSpaceX = float.MaxValue;
-                for (int j = 0; j < i; j++) {
-                    spawnSpaceX = Mathf.Min(spawnSpaceX, Mathf.Abs((spawnPos - positions[j]).x));
-                }
-                if(spawnSpaceX >= minSpawnSpaceX) {
+            switch (alivePlayers.Count) {
+                case 1:
+                    var winnerDragon = alivePlayers[0];
+                    winnerDragon.GetComponent<DamageController>().onDeath -= OnDragonDeath;
+                    StartCoroutine("EndRound", winnerDragon);
                     break;
-                }
+                case 0:
+                    StartCoroutine("EndRound", null);
+                    break;
             }
-
-            positions[i] = spawnPos;
-            player.transform.position = spawnPos;
-        }
-    }
-
-    private void OnDragonDeath(GameObject deadDragon) {
-        alivePlayers.Remove(deadDragon);
-        deadDragon.GetComponent<DamageController>().onDeath -= OnDragonDeath;
-
-        switch (alivePlayers.Count) {
-            case 1:
-                var winnerDragon = alivePlayers[0];
-                winnerDragon.GetComponent<DamageController>().onDeath -= OnDragonDeath;
-                StartCoroutine("EndRound", winnerDragon);
-                break;
-            case 0:
-                StartCoroutine("EndRound", null);
-                break;
-        }
-    }
-
-    private IEnumerator EndRound(GameObject winnerDragon) {
-        AudioSource.PlayClipAtPoint(victorySound, Camera.main.transform.position);
-        if(winnerDragon != null) {
-            Instantiate(victoryPrefab, winnerDragon.transform);
         }
 
-        yield return new WaitForSeconds(3f);
+        private IEnumerator EndRound(GameObject winnerDragon) {
+            RewardWinner(winnerDragon);
+            yield return new WaitForSeconds(3f);
 
-        if (adata) {
-            if (winnerDragon != null) {
-                adata.pdata[winnerDragon.GetComponent<DragonController>().playerID].score += 1;
-            }
-            adata.roundsRemaining -= 1;
-            if(adata.roundsRemaining == 0) {
+            if(gManager != null && gManager.IsGameFinished()) {
                 OnGameEnd.Invoke();
-                //TEMP
-                Destroy(adata);
                 yield break;
             }
+            
+            OnRoundEnd.Invoke();
         }
 
-        OnRoundEnd.Invoke();
+        private void RewardWinner(GameObject winnerDragon) {
+            AudioSource.PlayClipAtPoint(victorySound, Camera.main.transform.position);
+
+            if (winnerDragon != null) {
+                Instantiate(victoryPrefab, winnerDragon.transform);
+                var winnerID = winnerDragon.GetComponent<DragonController>().playerID;
+                gManager.GetPlayerStatsData(winnerID).Wins += 1;
+            }
+        }
     }
+
 }

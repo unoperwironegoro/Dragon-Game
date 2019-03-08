@@ -330,25 +330,26 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: InstantSwitch
+      - m_Target: {fileID: 2094394997}
+        m_MethodName: SetGameData
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: cd8980964587ad14cafb932b1acdbaaa,
+            type: 2}
+          m_ObjectArgumentAssemblyTypeName: Unoper.Unity.DragonGame.GameData, Assembly-CSharp
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 877150279}
+        m_MethodName: Transition
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 11400000, guid: a684c6e940d3efe4098380e66b0b0dd6,
             type: 2}
           m_ObjectArgumentAssemblyTypeName: SceneSwitchData, Assembly-CSharp
           m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Arena1
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 887170904}
-        m_MethodName: SetPlayerCount
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -446,7 +447,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 887170905}
-  - component: {fileID: 887170904}
   m_Layer: 5
   m_Name: Scene Logic
   m_TagString: Untagged
@@ -454,17 +454,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &887170904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 887170903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d739792052ba7f84a803306da78c46d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &887170905
 RectTransform:
   m_ObjectHideFlags: 0
@@ -653,6 +642,48 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1114600246}
   m_CullTransparentMesh: 0
+--- !u!1001 &1128686030
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 6.468946
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -6.683261
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -0.19612806
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810171170583534, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ae5a8198531403f46abf7cf33d9977cb, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1001 &1200793568
 Prefab:
   m_ObjectHideFlags: 0
@@ -772,12 +803,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   palette:
-  - {r: 0.007843138, g: 0.05490196, b: 0.14117648, a: 0}
-  - {r: 0.015686275, g: 0.015686275, b: 0.03137255, a: 0}
-  - {r: 0.07058824, g: 0.23529412, b: 0.3019608, a: 0}
-  - {r: 1, g: 0.09411765, b: 0.09411765, a: 0}
+  - {r: 0.039215688, g: 0.16470589, b: 0.28627452, a: 0}
+  - {r: 0.15294118, g: 0, b: 0.54509807, a: 0}
+  - {r: 0.22352941, g: 0.5529412, b: 0.61960787, a: 0}
+  - {r: 1, g: 1, b: 1, a: 0}
   random: 1
-  colourPreset: 4
+  colourPreset: 1
 --- !u!1001 &1206420556
 Prefab:
   m_ObjectHideFlags: 0
@@ -920,7 +951,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4812466825587222, guid: 4517677afac9ed34aa78b5f20f1e50a0, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4517677afac9ed34aa78b5f20f1e50a0, type: 2}
@@ -1255,12 +1286,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   palette:
-  - {r: 0.039215688, g: 0.16470589, b: 0.28627452, a: 0}
-  - {r: 0.15294118, g: 0, b: 0.54509807, a: 0}
-  - {r: 0.22352941, g: 0.5529412, b: 0.61960787, a: 0}
-  - {r: 1, g: 1, b: 1, a: 0}
+  - {r: 0.8, g: 1, b: 0.4862745, a: 0}
+  - {r: 0.8980392, g: 0.85490197, b: 0.27058825, a: 0}
+  - {r: 0.1254902, g: 0.34509805, b: 0.105882354, a: 0}
+  - {r: 0.27058825, g: 0.56078434, b: 0.23529412, a: 0}
   random: 1
-  colourPreset: 1
+  colourPreset: 3
 --- !u!1 &1788451978
 GameObject:
   m_ObjectHideFlags: 0
@@ -1337,24 +1368,25 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: InstantSwitch
+      - m_Target: {fileID: 2094394997}
+        m_MethodName: SetGameData
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 169433ccbb661b14dad49a2f98f924ff,
+          m_ObjectArgument: {fileID: 11400000, guid: 7790eb1ebb0b1a845b468395fd84bf1f,
             type: 2}
-          m_ObjectArgumentAssemblyTypeName: SceneSwitchData, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: Unoper.Unity.DragonGame.GameData, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: Arena1
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 887170904}
-        m_MethodName: SetPlayerCount
-        m_Mode: 3
+      - m_Target: {fileID: 877150279}
+        m_MethodName: Transition
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 11400000, guid: a684c6e940d3efe4098380e66b0b0dd6,
+            type: 2}
+          m_ObjectArgumentAssemblyTypeName: SceneSwitchData, Assembly-CSharp
           m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1520,3 +1552,43 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2089327647}
   m_CullTransparentMesh: 0
+--- !u!1 &2094394996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2094394998}
+  - component: {fileID: 2094394997}
+  m_Layer: 0
+  m_Name: Game Manager Updater
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2094394997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2094394996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab9634cf68711d54d88cc3e3303983c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2094394998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2094394996}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 583.55316, y: 222.50304, z: 11.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

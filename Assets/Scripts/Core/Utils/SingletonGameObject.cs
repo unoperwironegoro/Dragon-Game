@@ -16,6 +16,9 @@ namespace Unoper.Unity.Utils
         [SerializeField] private bool DestroyOnLoad;
         private bool _isSingleton;
 
+        public T SingletonTag { get { return Id; } }
+        public bool IsSingleton { get { return _isSingleton; } }
+
         private void Awake()
         {
             Debug.Log("Attempting to create singleton: " + Id.ToString());

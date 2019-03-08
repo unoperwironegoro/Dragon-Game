@@ -1,4 +1,4 @@
 ﻿public enum SingletonEnums {
-    ArenaData,
+    GameManager,
     CustomisationManager
 }
