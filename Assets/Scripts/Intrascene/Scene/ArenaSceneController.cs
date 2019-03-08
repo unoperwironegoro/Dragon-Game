@@ -25,7 +25,7 @@ namespace Unoper.Unity.DragonGame {
 
         private const float minSpawnSpaceX = 2f;
 
-	    void Start () {
+	    private void Start () {
             gManager = SingletonHelper.Find(SingletonEnums.GameManager).GetComponent<GameManager>();
             cManager = SingletonHelper.Find(SingletonEnums.CustomisationManager).GetComponent<CustomisationManager>();
 
@@ -38,7 +38,9 @@ namespace Unoper.Unity.DragonGame {
                     .Range(0, humanCount)
                     .Select(i => {
                         var dragon = CreateDragon(i);
-                        cManager.GetPlayerCustomisation(i).SetDataToDragon(dragon);
+                        DragonHelper.SetDragonAsPlayer(
+                            cManager.GetPlayerCustomisation(i),
+                            dragon);
                         return dragon;
                     });
 
@@ -70,9 +72,20 @@ namespace Unoper.Unity.DragonGame {
             newDragon.GetComponent<DamageController>().onDeath += OnDragonDeath;
 
             // Populating dragon
-            newDragon.GetComponent<DragonController>().playerID = playerID;
+            var dc = newDragon.GetComponent<DragonController>();
+            dc.playerID = playerID;
             newDragon.GetComponent<Palette>().ColourSet = ColourSets.RandomColourSet();
+
+            TrackDragonStats(playerID, dc);
+
             return newDragon;
+        }
+
+        private void TrackDragonStats(int playerID, DragonController dc) {
+            var psd = gManager.GetPlayerStatsData(playerID);
+            dc.OnFireball += () => psd.Fireballs++;
+            dc.OnStomp += () => psd.Stomps++;
+            dc.OnFlap += () => psd.Flaps++;
         }
 
         private void PositionPlayers() {

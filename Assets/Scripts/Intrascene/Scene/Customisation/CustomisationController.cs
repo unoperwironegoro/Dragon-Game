@@ -23,8 +23,6 @@ namespace Unoper.Unity.DragonGame {
         private CustomisationManager CManager;
         private PlayerCustomisationData customisationData;
 
-        private static string[] numberWords = { "One", "Two", "Three", "Four" };
-
         private void Start () {
             CManager = SingletonHelper.Find(SingletonEnums.CustomisationManager)
                 .GetComponent<CustomisationManager>();
@@ -32,7 +30,7 @@ namespace Unoper.Unity.DragonGame {
 	    }
 
         public void UpdateDragon() {
-            customisationData.SetDataToDragon(DemoDragon);
+            DragonHelper.SetDragonAsPlayer(customisationData, DemoDragon);
         }
 	
 	    public void Back() {
@@ -58,7 +56,7 @@ namespace Unoper.Unity.DragonGame {
 
             customisationData = CManager.GetPlayerCustomisation(playerID);
             OnPlayerChange.Invoke(customisationData);
-            customisationData.SetDataToDragon(DemoDragon);
+            DragonHelper.SetDragonAsPlayer(customisationData, DemoDragon);
 
             UpdateUI(playerID);
 
@@ -72,7 +70,7 @@ namespace Unoper.Unity.DragonGame {
             next.enabled = !penultimate;
             prev.enabled = !first;
 
-            title.text = "Player " + numberWords[playerID];
+            title.text = "Player " + TextConstants.NUMBER_WORDS[playerID];
         }
     }
 }

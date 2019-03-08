@@ -10,16 +10,12 @@ public class DragonController : MonoBehaviour {
     public Vector2 recoilVelocity;
     public Vector2 projectileVelocity;
 
-    [SerializeField]
-    private GameObject projectilePrefab;
+    [SerializeField] private GameObject projectilePrefab;
     private ParticleSystem smoulder;
 
-    [SerializeField]
-    private AudioClip roarSound;
-    [SerializeField]
-    private AudioClip flapSound;
-    [SerializeField]
-    private AudioClip fireSound;
+    [SerializeField] private AudioClip roarSound;
+    [SerializeField] private AudioClip flapSound;
+    [SerializeField] private AudioClip fireSound;
     private float roarVolume = 1.0f;
     private float flapVolume = 1.0f;
     private float fireVolume = 0.3f;
@@ -44,6 +40,11 @@ public class DragonController : MonoBehaviour {
     private Vector2 projSpawnpoint = new Vector2(0.6f, 0.0f);
 
     private bool readInput = true;
+
+    public delegate void OnAction();
+    public OnAction OnFlap;
+    public OnAction OnStomp;
+    public OnAction OnFireball;
 
 	void Awake () {
         rb2d = GetComponent<Rigidbody2D>();
@@ -116,6 +117,10 @@ public class DragonController : MonoBehaviour {
         Turn(dir);
         anim.SetBool("Flap", true);
         AudioSource.PlayClipAtPoint(flapSound, Camera.main.transform.position, flapVolume);
+
+        if(OnFlap != null) {
+            OnFlap.Invoke();
+        }
         return true;
     }
 
@@ -159,6 +164,10 @@ public class DragonController : MonoBehaviour {
         anim.SetTrigger("Fire");
         AudioSource.PlayClipAtPoint(fireSound, Camera.main.transform.position, fireVolume);
         Turn(dir);
+
+        if(OnFireball != null) {
+            OnFireball.Invoke();
+        }
     }
     #endregion
 
@@ -167,9 +176,9 @@ public class DragonController : MonoBehaviour {
 
         if(layer == LayerMask.NameToLayer("Dragon")) {
             if(AboveDragon(col.gameObject)) {
-                OnStomp();
+                Stomp();
             } else {
-                OnStomped();
+                Stomped();
             }
         }
         if(layer == LayerMask.NameToLayer("Environment")) {
@@ -194,16 +203,20 @@ public class DragonController : MonoBehaviour {
         anim.SetBool("Stunned", false);
     }
 
-    private void OnStomp() {
-        if(!dc.Dead) {
+    private void Stomp() {
+        if(dc.Dead) {
             return;
         }
         var v = rb2d.velocity;
         v.y = stompBoost;
         rb2d.velocity = v;
+
+        if(OnStomp != null) {
+            OnStomp.Invoke();
+        }
     }
 
-    private void OnStomped() {
+    private void Stomped() {
         if(dc.Hurt(stompDamage)) {
             dc.Stun(stompStun);
         }
@@ -232,6 +245,10 @@ public class DragonController : MonoBehaviour {
         dc.onUnstun -= OnUnstun;
         dc.onDeath -= OnDeath;
         dc.onDamage -= OnDamage;
+
+        OnFlap = null;
+        OnFireball = null;
+        OnStomp = null;
     }
     #endregion
 

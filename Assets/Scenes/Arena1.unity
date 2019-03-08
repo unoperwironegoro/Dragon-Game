@@ -1267,7 +1267,7 @@ MonoBehaviour:
         m_MethodName: Transition
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 90b093a41153c4443a91a7df63d4fc4f,
+          m_ObjectArgument: {fileID: 11400000, guid: bf32e60585b1c6046bdcdbabe333e34d,
             type: 2}
           m_ObjectArgumentAssemblyTypeName: SceneSwitchData, Assembly-CSharp
           m_IntArgument: 0

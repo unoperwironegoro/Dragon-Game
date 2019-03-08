@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 685a4fc14e81b754680563a4025d8c78, type: 3}
-  m_Name: PlayerStatsData
+  m_Name: Initial
   m_EditorClassIdentifier: 
   Wins: 0
   Fireballs: 0

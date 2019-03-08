@@ -3,7 +3,7 @@ using Unoper.Unity.Utils;
 
 namespace Unoper.Unity.DragonGame {
 
-    public class GameDataUpdater : MonoBehaviour {
+    public class GameManagerUpdater : MonoBehaviour {
 
         private GameManager gManager;
 
@@ -13,6 +13,7 @@ namespace Unoper.Unity.DragonGame {
 
         public void SetGameData(GameData gd) {
             gManager.SetGameData(gd);
+            gManager.ResetStats();
         }
     }
 

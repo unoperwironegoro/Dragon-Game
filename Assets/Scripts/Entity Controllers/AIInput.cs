@@ -40,6 +40,10 @@ public class AIInput : MonoBehaviour, IController {
     }
 
     public ControlDir Flap() {
+        if (!(lava && floor && ceiling)) {
+            return ControlDir.NONE;
+        }
+
         ControlDir flap = DecideFlap();
         release = flap;
         return flap;

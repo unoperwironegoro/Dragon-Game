@@ -8,7 +8,7 @@ namespace Unoper.Unity.DragonGame {
 
         [SerializeField] private PlayerCustomisationData[] PlayerCustomisations;
 
-        private void Start() {
+        private void Awake() {
             var maxPlayers = GameConstants.Instance.MAX_PLAYERS;
             PlayerCustomisations = new PlayerCustomisationData[maxPlayers];
 

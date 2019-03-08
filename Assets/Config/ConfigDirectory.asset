@@ -14,4 +14,4 @@ MonoBehaviour:
   FOLDER_DEFAULT_CUSTOMISATION: Data/Defaults/PlayerCustomisation/
   ASSET_GAME_CONSTANTS: Game/GameConstants
   ASSET_PLAYERPREF_KEYS: Data/PlayerPrefKeys
-  ASSET_DEFAULT_STATS: Data/Defaults/PlayerStatsData
+  ASSET_DEFAULT_STATS: Data/Defaults/PlayerStats/Initial
