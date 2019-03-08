@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class ArenaSceneController : MonoBehaviour {
+
     public GameObject dragonPrefab;
     public GameObject victoryPrefab;
 

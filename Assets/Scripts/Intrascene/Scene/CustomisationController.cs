@@ -1,143 +1,76 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class CustomisationController : MonoBehaviour {
-    [SerializeField]
-    private PlayerInput pinput;
-    [SerializeField]
-    private Palette palette;
+namespace Unoper.Unity.DragonGame {
 
-    private Text keyText;
-    [SerializeField]
-    private Text leftText;
-    [SerializeField]
-    private Text rightText;
+    public class CustomisationController : MonoBehaviour {
+        [SerializeField] GameObject DemoDragon;
 
-    private int colourIndex;
-    private Color[] colourSet = ColourSets.colourSets[0];
-    [SerializeField]
-    private Image colourBoxBorder;
-    [SerializeField]
-    private Image colourBoxFill;
+        // Navigation
+        [SerializeField] private Text next;
+        [SerializeField] private Text prev;
 
-    [SerializeField]
-    private Text title;
-    [SerializeField]
-    private Text next;
-    [SerializeField]
-    private Text prev;
+        // Current player being customised
+        [SerializeField] private Text title;
+        [SerializeField] private int playerID;
 
-    [SerializeField]
-    private int playerID;
+        [Serializable] public class PlayerCustomisationContextChangeEvent : UnityEvent<PlayerCustomisationData> {}
+        [SerializeField] private PlayerCustomisationContextChangeEvent OnPlayerChange;
 
-    private DragonConfig dc;
+        private CustomisationManager CManager;
+        private PlayerCustomisationData customisationData;
 
-    private const string thisSceneName = "Customisation";
+        private static string[] numberWords = { "One", "Two", "Three", "Four" };
 
-    private static string[] numberWords = { "One", "Two", "Three", "Four" };
-    private const string puncInput = "`-=[];\\,./";
-    private const int colourFillIndex = 0;
-    private const int colourBorderIndex = 3;
+        private void Start () {
+            CManager = FindObjectOfType<CustomisationManager>();
+            ChangePlayerCustomisationContext(0);
+	    }
 
-    void Start () {
-        ChangePlayer(0);
-	}
-
-    private void ChangePlayer(int playerID) {
-        this.playerID = playerID;
-
-        dc = GameData.GetPlayerData(playerID);
-        leftText.text = dc.leftButton;
-        rightText.text = dc.rightButton;
-
-        Color c = dc.colourset[colourFillIndex];
-        c.a = 1;
-        colourBoxFill.color = c;
-        c = dc.colourset[colourBorderIndex];
-        c.a = 1;
-        colourBoxBorder.color = c;
-        
-        dc.SetDataToDragon(pinput.gameObject);
-
-        int playerNum = playerID + 1;
-        bool penultimate = GameData.PlayerCount == playerNum;
-        bool first = playerNum == 1;
-
-        next.enabled = !penultimate;
-        prev.enabled = !first;
-
-        title.text = "Player " + numberWords[playerNum - 1];
-    }
+        public void UpdateDragon() {
+            customisationData.SetDataToDragon(DemoDragon);
+        }
 	
-	public void Back() {
-        if(!prev.enabled) {
-            return;
-        }
-        ChangePlayer(playerID - 1);
-	}
-
-    public void Done(string finishScene) {
-        SceneSwitcher.InstantSwitch(finishScene, gameObject.scene.name, UnityEngine.SceneManagement.LoadSceneMode.Additive);
-    }
-
-    public void Next() {
-        if (!next.enabled) {
-            return;
-        }
-        ChangePlayer(playerID + 1);
-    }
-
-    public void SetLRContext(Text text) {
-        keyText = text;
-    }
-
-    private void Update() {
-        if(!keyText) {
-            return;
-        }
-
-        string newKey = GetKey();
-        if(newKey != null) {
-            keyText.text = newKey;
-            if(keyText == leftText) {
-                pinput.leftKey = newKey;
-                dc.leftButton = newKey;
-            } else /* rightText */ {
-                pinput.rightKey = newKey;
-                dc.rightButton = newKey;
+	    public void Back() {
+            if(!prev.enabled) {
+                return;
             }
-            keyText = null;
-        }
-    }
+            ChangePlayerCustomisationContext(playerID - 1);
+	    }
 
-    private string GetKey() {
-        foreach (char c in Input.inputString) {
-            char lc = char.ToLower(c);
-            if ('a' <= lc && c <= 'z') {
-                return lc.ToString();
+        public void Next() {
+            if (!next.enabled) {
+                return;
             }
-
-            if (puncInput.Contains(c.ToString())) {
-                return c.ToString();
-            }
+            ChangePlayerCustomisationContext(playerID + 1);
         }
-        return null;
-    }
 
-    public void ColourSwitch() {
-        colourIndex = (colourIndex + 1) % ColourSets.colourSets.Length;
-        colourSet = ColourSets.colourSets[colourIndex];
+        public void Done(string finishScene) {
+            SceneSwitcher.InstantSwitch(finishScene, gameObject.scene.name, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+        }
 
-        palette.ColourSet = colourSet;
-        dc.colourset = colourSet;
+        private void ChangePlayerCustomisationContext(int playerID) {
+            this.playerID = playerID;
 
-        Color c = colourSet[colourBorderIndex];
-        c.a = 1;
-        colourBoxBorder.color = c;
-        c = colourSet[colourFillIndex];
-        c.a = 1;
-        colourBoxFill.color = c;
+            customisationData = CManager.GetPlayerCustomisation(playerID);
+            OnPlayerChange.Invoke(customisationData);
+            customisationData.SetDataToDragon(DemoDragon);
+
+            UpdateUI(playerID);
+
+        }
+
+        private void UpdateUI(int playerID) {
+            int playerNum = playerID + 1;
+            bool penultimate = GameData.PlayerCount == playerNum;
+            bool first = playerNum == 1;
+
+            next.enabled = !penultimate;
+            prev.enabled = !first;
+
+            title.text = "Player " + numberWords[playerID];
+        }
     }
 }
