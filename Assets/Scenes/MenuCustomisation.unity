@@ -290,7 +290,7 @@ Prefab:
     - target: {fileID: 224265755883162026, guid: f5a3415b300ad5a46b70e41c4bcd4646,
         type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 224265755883162026, guid: f5a3415b300ad5a46b70e41c4bcd4646,
         type: 2}
@@ -349,6 +349,12 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5a3415b300ad5a46b70e41c4bcd4646, type: 2}
   m_IsPrefabAsset: 0
+--- !u!114 &34524994 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114702184435580500, guid: f5a3415b300ad5a46b70e41c4bcd4646,
+    type: 2}
+  m_PrefabInternal: {fileID: 34524993}
+  m_Script: {fileID: 11500000, guid: dea8138d2fa48e644baba3320252e515, type: 3}
 --- !u!1001 &39556363
 Prefab:
   m_ObjectHideFlags: 0
@@ -386,7 +392,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4163186863539006, guid: b3e852ecef37a1e42a9b53de370233f2, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 212980902178367832, guid: b3e852ecef37a1e42a9b53de370233f2,
         type: 2}
@@ -581,14 +587,26 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1196005352}
-        m_MethodName: Done
-        m_Mode: 5
+        m_MethodName: Save
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: MenuMain
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 34524994}
+        m_MethodName: Transition
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: 90b093a41153c4443a91a7df63d4fc4f,
+            type: 2}
+          m_ObjectArgumentAssemblyTypeName: SceneSwitchData, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -666,7 +684,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!21 &565325547
 Material:

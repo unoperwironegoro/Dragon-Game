@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class ArenaSceneController : MonoBehaviour {
+
+    [SerializeField] private UnityEvent OnGameEnd;
+    [SerializeField] private UnityEvent OnRoundEnd;
 
     public GameObject dragonPrefab;
     public GameObject victoryPrefab;
@@ -119,13 +122,13 @@ public class ArenaSceneController : MonoBehaviour {
             }
             adata.roundsRemaining -= 1;
             if(adata.roundsRemaining == 0) {
-                SceneSwitcher.Transition("MenuMain");
+                OnGameEnd.Invoke();
                 //TEMP
                 Destroy(adata);
                 yield break;
             }
         }
 
-        SceneSwitcher.Transition("Arena1");
+        OnRoundEnd.Invoke();
     }
 }

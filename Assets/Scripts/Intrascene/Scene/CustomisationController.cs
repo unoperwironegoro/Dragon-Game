@@ -47,8 +47,8 @@ namespace Unoper.Unity.DragonGame {
             ChangePlayerCustomisationContext(playerID + 1);
         }
 
-        public void Done(string finishScene) {
-            SceneSwitcher.InstantSwitch(finishScene, gameObject.scene.name, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+        public void Save() {
+            CManager.SaveCustomisations();
         }
 
         private void ChangePlayerCustomisationContext(int playerID) {

@@ -8,10 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b637c091f3539f478568d889d094c54, type: 3}
-  m_Name: Customisation
+  m_Script: {fileID: 11500000, guid: d474d0ef178b01a46a478ea4d28a5b8c, type: 3}
+  m_Name: 3
   m_EditorClassIdentifier: 
-  loadedScenes:
-  - MenuCustomisation
-  unloadedScenes:
-  - MenuMain
+  ColourSetIndex: 2
+  LeftButton: q
+  RightButton: w

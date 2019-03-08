@@ -2,34 +2,41 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// TODO DI
 public class AIInput : MonoBehaviour, IController {
     private Transform lava;
     private Transform floor;
     private Transform ceiling;
     private List<DamageController> dragons;
 
-    [SerializeField]
-    private float flapMinHeadroom;
-    [SerializeField]
-    private float flapMinElevation;
-    [SerializeField]
-    private float flapMinTowards;
+    [SerializeField] private float flapMinHeadroom;
+    [SerializeField] private float flapMinElevation;
+    [SerializeField] private float flapMinTowards;
 
     private ControlDir flap;
     private ControlDir release;
 
     private float releaseTime = 0;
 
-    void Start() {
+    private void Start() {
         //TODO extract
         // Find level layout
-        lava = GameObject.Find("Lava").transform;
-        floor = GameObject.Find("Floor").transform;
-        ceiling = GameObject.Find("Ceiling").transform;
+        lava = TryGetTransform(GameObject.Find("Lava"));
+        floor = TryGetTransform(GameObject.Find("Floor"));
+        ceiling = TryGetTransform(GameObject.Find("Ceiling"));
 
         // Find all other dragons
         dragons = new List<DamageController>(FindObjectsOfType<DamageController>());
         dragons.Remove(GetComponent<DamageController>());
+    }
+
+    private Transform TryGetTransform(GameObject obj) {
+        if (obj == null) {
+            Debug.LogWarning("AI Failed to find bounds.");
+            Destroy(gameObject);
+            return null;
+        }
+        return obj.transform;
     }
 
     public ControlDir Flap() {

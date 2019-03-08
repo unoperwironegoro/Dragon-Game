@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Controls switching between scenes, using animations.
 /// </summary>
-public class SceneSwitcher : SingletonBehaviour<SceneSwitcher> {
-    [SerializeField]
-    private GameObject transitionObject;
+public class SceneSwitcher : MonoBehaviour {
+    [SerializeField] private GameObject transitionObject;
 
     private IResponder transitioner;
     private SceneSwitchData sceneSwitchData;
@@ -17,48 +15,66 @@ public class SceneSwitcher : SingletonBehaviour<SceneSwitcher> {
         transitioner = transitionObject.GetComponent<IResponder>();
     }
 
+    // Uses Transition object
+    public void Transition(string[] loadedScenes, string[] unloadScenes) {
+        Transition(CreateSSD(loadedScenes, unloadScenes));
+    }
+
+    public void Transition(SceneSwitchData ssd) {
+        sceneSwitchData = ssd;
+        StartLoadingScene();
+    }
+
+    // Does not use Transition object
+    public void InstantSwitch(string[] loadedScenes, string[] unloadScenes) {
+        InstantSwitch(CreateSSD(loadedScenes, unloadScenes));
+    }
+
+    public void InstantSwitch(SceneSwitchData ssd) {
+        sceneSwitchData = ssd;
+        LoadScene();
+    }
+
+
     /// <summary>
     /// Actually loads the Scene. May be called directly or as a Response.
     /// </summary>
-    public void LoadScene () {
-        if(sceneSwitchData.unloadScene != null) {
-            SceneManager.UnloadSceneAsync(sceneSwitchData.unloadScene);
+    public void LoadScene() {
+
+        if (sceneSwitchData.unloadedScenes.Length > 0 && sceneSwitchData.unloadedScenes[0] == "*") {
+            SceneManager.LoadScene(sceneSwitchData.loadedScenes[0], LoadSceneMode.Single);
+            LoadNewScenes(sceneSwitchData.loadedScenes.Skip(1).ToArray());
+            return;
         }
-        if(sceneSwitchData.sceneName != null) {
-            SceneManager.LoadScene(sceneSwitchData.sceneName, sceneSwitchData.sceneMode);
+
+        LoadNewScenes(sceneSwitchData.loadedScenes);
+        UnloadScenes(sceneSwitchData.unloadedScenes);
+    }
+
+    private void UnloadScenes(string[] sceneNames) {
+        if (sceneNames != null) {
+            foreach (var sceneName in sceneNames) {
+                SceneManager.UnloadSceneAsync(sceneName);
+            }
         }
-        sceneSwitchData = null;
-	}
+    }
+
+    private void LoadNewScenes(string[] sceneNames) {
+        if (sceneNames != null) {
+            foreach (var sceneName in sceneNames) {
+                SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+            }
+        }
+    }
 
     private void StartLoadingScene() {
         transitioner.Request(LoadScene);
     }
-    
-    private static SceneSwitchData CreateSSD(string sceneName, string unloadSceneName, LoadSceneMode sceneMode) {
-        return SceneSwitchData.Create(sceneName, unloadSceneName, sceneMode);
+
+    private static SceneSwitchData CreateSSD(string[] loadedScenes, string[] unloadScenes) {
+        var ssd = ScriptableObject.CreateInstance<SceneSwitchData>();
+        ssd.loadedScenes = loadedScenes;
+        ssd.unloadedScenes = unloadScenes;
+        return ssd;
     }
-
-#region API
-
-    //TODO unload scene, builder?
-
-    public static void Transition(string sceneName, string unloadSceneName = null, LoadSceneMode sceneMode = LoadSceneMode.Single) {
-        Instance.Transition(CreateSSD(sceneName, unloadSceneName, sceneMode));
-    }
-
-    public void Transition(SceneSwitchData sceneSwitchData) {
-        this.sceneSwitchData = sceneSwitchData;
-        StartLoadingScene();
-    }
-
-    public static void InstantSwitch(string sceneName, string unloadSceneName = null, LoadSceneMode sceneMode = LoadSceneMode.Single) {
-        Instance.InstantSwitch(CreateSSD(sceneName, unloadSceneName, sceneMode));
-    }
-
-    public void InstantSwitch(SceneSwitchData sceneSwitchData) {
-        this.sceneSwitchData = sceneSwitchData;
-        LoadScene();
-    }
-
-#endregion
 }

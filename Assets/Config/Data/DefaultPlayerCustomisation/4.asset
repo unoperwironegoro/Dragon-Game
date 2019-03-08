@@ -9,8 +9,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d474d0ef178b01a46a478ea4d28a5b8c, type: 3}
-  m_Name: DefaultPlayerCustomisation
+  m_Name: 4
   m_EditorClassIdentifier: 
-  _ColourSetName: 
-  _LeftButton: 
-  _RightButton: 
+  ColourSetIndex: 3
+  LeftButton: o
+  RightButton: p

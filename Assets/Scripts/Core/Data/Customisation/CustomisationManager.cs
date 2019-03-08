@@ -6,7 +6,15 @@ namespace Unoper.Unity.DragonGame {
     public class CustomisationManager : MonoBehaviour {
 
         [SerializeField] private PlayerCustomisationData[] PlayerCustomisations = new PlayerCustomisationData[4];
-        private static PlayerCustomisationData DefaultPlayerCustomisation;
+
+        private void Start() {
+            // Load Player Customisations
+            for (int i = 0; i < PlayerCustomisations.Length; i++) {
+                if (PlayerCustomisations[i] == null) {
+                    PlayerCustomisations[i] = LoadPlayerCustomisation(i);
+                }
+            }
+        }
 
         public PlayerCustomisationData GetPlayerCustomisation(int i) {
             return PlayerCustomisations[i];
@@ -22,25 +30,12 @@ namespace Unoper.Unity.DragonGame {
             }
         }
 
-        private void Awake() {
-            DefaultPlayerCustomisation =  AssetDatabase.LoadAssetAtPath<PlayerCustomisationData>("Assets/Config/Data/DefaultPlayerCustomisation.asset");
-
-            // Load Player Customisations
-            for (int i = 0; i < PlayerCustomisations.Length; i++) {
-                if(PlayerCustomisations[i] == null) {
-                    PlayerCustomisations[i] = LoadPlayerCustomisation(i);
-                }
-            }
-        }
-
         private PlayerCustomisationData LoadPlayerCustomisation(int index) {
             string key = GetPrefsKeyForPlayer(index);
             string value = PlayerPrefs.GetString(key);
-
-            var data = JsonUtility.FromJson<PlayerCustomisationData>(value);
-            if(data == null) {
-                return CreateDefaultPlayerCustomisation();
-            }
+            
+            var data = CreateDefaultPlayerCustomisation(index);
+            JsonUtility.FromJsonOverwrite(value, data);
 
             return data;
         }
@@ -55,9 +50,10 @@ namespace Unoper.Unity.DragonGame {
             return PlayerPrefKeys.CUSTOMISATION_PLAYER_X + index;
         }
 
-        private PlayerCustomisationData CreateDefaultPlayerCustomisation()
+        private PlayerCustomisationData CreateDefaultPlayerCustomisation(int index)
         {
-            return Instantiate(DefaultPlayerCustomisation);
+            return AssetDatabase.LoadAssetAtPath<PlayerCustomisationData>(
+                string.Format("Assets/Config/Data/DefaultPlayerCustomisation/{0}.asset", index + 1));
         }
     }
 }
