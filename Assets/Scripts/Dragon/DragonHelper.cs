@@ -15,7 +15,7 @@ namespace Unoper.Unity.DragonGame {
 
             if(changeColour) {
                 Palette pal = dragon.GetComponent<Palette>();
-                pal.ColourSet = ColourSets.colourSets[cData.ColourSetIndex];
+                pal.ColourSet = ColourCatalogue.GetColourSet(cData.ColourSetIndex);
             }
         }
 

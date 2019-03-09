@@ -22,7 +22,7 @@ namespace Unoper.Unity.DragonGame {
         }
 
         public void ColourSwitch() {
-            colourSetIndex = (colourSetIndex + 1) % ColourSets.colourSets.Length;
+            colourSetIndex = (colourSetIndex + 1) % ColourCatalogue.ColourSets.Length;
 
             UpdateUIColours(colourSetIndex);
 
@@ -31,7 +31,7 @@ namespace Unoper.Unity.DragonGame {
         }
 
         private void UpdateUIColours(int colourSetIndex) {
-            var colourSet = ColourSets.colourSets[colourSetIndex];
+            var colourSet = ColourCatalogue.GetColourSet(colourSetIndex);
 
             Color cFill = colourSet[colourFillIndex];
             cFill.a = 1;

@@ -74,7 +74,7 @@ namespace Unoper.Unity.DragonGame {
             // Populating dragon
             var dc = newDragon.GetComponent<DragonController>();
             dc.playerID = playerID;
-            newDragon.GetComponent<Palette>().ColourSet = ColourSets.RandomColourSet();
+            newDragon.GetComponent<Palette>().ColourSet = ColourCatalogue.RandomColourSet();
 
             TrackDragonStats(playerID, dc);
 

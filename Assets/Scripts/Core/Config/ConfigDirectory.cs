@@ -11,6 +11,7 @@ namespace Unoper.Unity.DragonGame {
         [SerializeField] public string ASSET_GAME_CONSTANTS;
         [SerializeField] public string ASSET_PLAYERPREF_KEYS;
         [SerializeField] public string ASSET_DEFAULT_STATS;
+        [SerializeField] public string ASSET_COLOURSET;
 
         public static ConfigDirectory Instance { get { return GetOrCreateFromAsset(ROOT + "ConfigDirectory.asset"); } }
 
