@@ -21,7 +21,7 @@ public class AIInput : MonoBehaviour, IController {
     private void Start() {
         //TODO extract
         // Find level layout
-        lava = TryGetTransform(GameObject.Find("Lava"));
+        lava = TryGetTransform(GameObject.Find("Moving Lava"));
         floor = TryGetTransform(GameObject.Find("Floor"));
         ceiling = TryGetTransform(GameObject.Find("Ceiling"));
 
@@ -52,9 +52,11 @@ public class AIInput : MonoBehaviour, IController {
     private ControlDir DecideFlap() {
         // Avoid ceiling / floor / lava
         float y = transform.position.y;
-        if (ceiling.position.y - y < flapMinHeadroom) {
+        float headroom = ceiling.position.y - y;
+        float elevation = y - Mathf.Max(floor.position.y, lava.position.y);
+        if (headroom < flapMinHeadroom) {
             return ControlDir.NONE;
-        } else if (y - Mathf.Max(floor.position.y, lava.position.y) < flapMinElevation) {
+        } else if (elevation < flapMinElevation) {
             return RandomFlap();
         }
 
@@ -68,7 +70,7 @@ public class AIInput : MonoBehaviour, IController {
         }
 
         Transform closest = ClosestDragon();
-        if(closest == null) {
+        if (closest == null) {
             releaseTime = Time.time + 0.1f + Random.Range(0.0f, 1.0f);
             return RandomFlap();
         }
