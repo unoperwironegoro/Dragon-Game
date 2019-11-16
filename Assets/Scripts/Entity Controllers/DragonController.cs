@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonController : MonoBehaviour {
+public class DragonController : MonoBehaviour, IFlapController {
     [HideInInspector]
     public int playerID = 0;
 
@@ -23,7 +23,6 @@ public class DragonController : MonoBehaviour {
     private Rigidbody2D rb2d;
     private Animator anim;
     private DamageController dc;
-    public IController ictrl;
 
     private float minChargeTime;
     private float chargeTimer = -100;
@@ -50,7 +49,6 @@ public class DragonController : MonoBehaviour {
         rb2d = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         dc = GetComponent<DamageController>();
-        ictrl = GetComponent<IController>();
         smoulder = GetComponentInChildren<ParticleSystem>();
 	}
 
@@ -65,74 +63,56 @@ public class DragonController : MonoBehaviour {
     }
 
 	void Update () {
-        if(!dc.stunned && readInput) {
-            ControlDragon();
+        if(dc.stunned || !readInput) {
+            return;
         }
-	}
-
-    private void ControlDragon() {
-        // Flap
-        if (Flap()) {
-            chargeTimer = 0;
-        }
-
-        // Release
-        int dirRelease = Release();
-        if (dirRelease != 0) {
-            if(charged) {
-                ShootProjectile(dirRelease);
-                Charged = false;
-            }
-            anim.SetBool("Flap", false);
-            chargeTimer = -1;
-        // Charge
-        } else if (chargeTimer > -1) {
+        if (chargeTimer > -1) {
             chargeTimer += Time.deltaTime;
             if (!charged && chargeTimer > minChargeTime) {
                 Charged = true;
             }
         }
-    }
+	}
 
     #region Player Actions
-    private bool Flap() {
-        int dir = 0;
-        switch(ictrl.Flap()) {
-            case ControlDir.NONE:
-                return false;
-            case ControlDir.LEFT:
-                dir = -1;
-                break;
-            case ControlDir.RIGHT:
-                dir = 1;
-                break;
+    public bool Flap(ControlDir dir) {
+        if (dc.stunned || !readInput) {
+            return false;
         }
+        int idir = dir == ControlDir.LEFT ? -1 : 1;
 
         // Physics
         Vector2 flap = flapVelocity;
-        flap.x *= dir;
+        flap.x *= idir;
         rb2d.velocity = flap;
 
         // Art Effects
-        Turn(dir);
+        Turn(idir);
         anim.SetBool("Flap", true);
         AudioSource.PlayClipAtPoint(flapSound, Camera.main.transform.position, flapVolume);
 
         if(OnFlap != null) {
             OnFlap.Invoke();
         }
+
+        chargeTimer = 0;
+
         return true;
     }
 
-    private int Release() {
-        switch (ictrl.Release()) {
-            case ControlDir.LEFT:
-                return -1;
-            case ControlDir.RIGHT:
-                return 1;
-            default:
-                return 0;
+    public bool Release(ControlDir dir) {
+        if (dc.stunned || !readInput) {
+            return false;
         }
+        int idir = dir == ControlDir.LEFT ? -1 : 1;
+        
+        if (charged) {
+            ShootProjectile(idir);
+            Charged = false;
+        }
+        anim.SetBool("Flap", false);
+        chargeTimer = -1;
+        return true;
     }
 
     private void Charge() {

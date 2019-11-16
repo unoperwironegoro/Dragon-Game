@@ -1,29 +1,28 @@
 ﻿using UnityEngine;
 
-public class PlayerInput : MonoBehaviour, IController {
+public class PlayerInput : MonoBehaviour {
     public string leftKey;
     public string rightKey;
+    public IFlapController flapController;
 
     void Start() {
-        GetComponent<DragonController>().ictrl = this;
+        flapController = GetComponent<DragonController>();
         Destroy(GetComponent<AIInput>());
     }
 
-    public ControlDir Flap() {
-        if(leftKey != default(string) && Input.GetKeyDown(leftKey)) {
-            return ControlDir.LEFT;
-        } else if (rightKey != default(string) && Input.GetKeyDown(rightKey)) {
-            return ControlDir.RIGHT;
+    private void Update() {
+        if (leftKey != default(string) && Input.GetKeyDown(leftKey)) {
+            flapController.Flap(ControlDir.LEFT);
         }
-        return ControlDir.NONE;
-    }
+        if (rightKey != default(string) && Input.GetKeyDown(rightKey)) {
+            flapController.Flap(ControlDir.RIGHT);
+        }
 
-    public ControlDir Release() {
         if (leftKey != default(string) && Input.GetKeyUp(leftKey)) {
-            return ControlDir.LEFT;
-        } else if (rightKey != default(string) && Input.GetKeyUp(rightKey)) {
-            return ControlDir.RIGHT;
+            flapController.Release(ControlDir.LEFT);
         }
-        return ControlDir.NONE;
+        if (rightKey != default(string) && Input.GetKeyUp(rightKey)) {
+            flapController.Release(ControlDir.RIGHT);
+        }
     }
 }
